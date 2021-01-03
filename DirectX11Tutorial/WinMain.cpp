@@ -19,7 +19,7 @@ int CALLBACK WinMain(
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_OWNDC;
-	wc.lpfnWndProc = DefWindowProc;
+	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = hInstance;
@@ -51,15 +51,25 @@ int CALLBACK WinMain(
 	ShowWindow(hWnd, SW_SHOW);
 	UpdateWindow(hWnd);
 
-	//// message pump
-	//MSG msg;
-	//while (GetMessage(&msg, nullptr, 0, 0) > 0)
-	//{
-	//	TranslateMessage(&msg);
-	//	DispatchMessage(&msg);
-	//}
+	// message pump
+	MSG msg;
+	BOOL gResult;
+	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 
-	while (true);
+	// GetMessage Error
+	if (gResult == -1)
+	{
+		return -1;
+	}
+	else
+	{
+		return msg.wParam;
+	}
+
 	return 0;
 }
 
@@ -71,5 +81,15 @@ LRESULT CALLBACK WndProc(
 	LPARAM lParam
 )
 {
+	switch (message)
+	{
+		case WM_CLOSE:
+			PostQuitMessage(69);
+			break;
+	}
+
+
+
+	// behavior
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
