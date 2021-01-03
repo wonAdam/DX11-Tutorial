@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <sstream>
+#include "WindowsMessageMap.h"
 
 LRESULT CALLBACK WndProc(
 	HWND   hWnd,
@@ -14,7 +16,7 @@ int CALLBACK WinMain(
 	int       nCmdShow
 )
 {
-	const auto pClassName = L"hw3dbuttslol";
+	LPCSTR pClassName = "hw3dbuttslol";
 	// register window class
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -36,7 +38,7 @@ int CALLBACK WinMain(
 	RECT rc = { 0, 0, 640, 480 };
 	// create window instance
 	HWND hWnd = CreateWindowEx(
-		0, pClassName, L"Happy Hard Window",
+		0, pClassName, "Happy Hard Window",
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		200, 200,
 		//rc.right - rc.left, rc.bottom - rc.top,
@@ -51,7 +53,7 @@ int CALLBACK WinMain(
 	ShowWindow(hWnd, SW_SHOW);
 	UpdateWindow(hWnd);
 
-	// message pump
+	// message loop
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
@@ -69,8 +71,6 @@ int CALLBACK WinMain(
 	{
 		return msg.wParam;
 	}
-
-	return 0;
 }
 
 
@@ -81,14 +81,43 @@ LRESULT CALLBACK WndProc(
 	LPARAM lParam
 )
 {
+	static WindowsMessageMap mm;
+	OutputDebugString( mm(message, lParam, wParam).c_str() );
+
 	switch (message)
 	{
 		case WM_CLOSE:
 			PostQuitMessage(69);
 			break;
+		case WM_KEYDOWN:
+			if (wParam == 'F')
+			{
+				SetWindowText(hWnd, "Respect");
+			}
+			break;
+		case WM_KEYUP: 
+			if (wParam == 'F')
+			{
+				SetWindowText(hWnd, "Danger");
+			}
+			break;
+		case WM_CHAR: // Translated by TranslateMessageuse, this for character input, letter
+			{
+				static std::string title;
+				title.push_back((char)wParam);
+				SetWindowText(hWnd, title.c_str());
+			}
+			break;
+		case WM_LBUTTONDOWN:
+			{
+			const POINTS pt = MAKEPOINTS(lParam);
+			std::ostringstream oss;
+			oss << "(" << pt.x << ", " << pt.y << ")";
+			SetWindowText(hWnd, oss.str().c_str());
+			}
+			
+			break;
 	}
-
-
 
 	// behavior
 	return DefWindowProc(hWnd, message, wParam, lParam);
