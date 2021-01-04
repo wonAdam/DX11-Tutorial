@@ -7,7 +7,6 @@ int CALLBACK WinMain(
 	int       nCmdShow
 )
 {
-	int a;
 	try 
 	{
 		Window wnd(800, 300, "Donkey Fart Box");
@@ -18,6 +17,11 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			if (wnd.kbd.KeyIsPressed(VK_MENU))
+			{
+				MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed", MB_OK | MB_ICONEXCLAMATION);
+			}
+
 		}
 
 		if (gResult == -1)
