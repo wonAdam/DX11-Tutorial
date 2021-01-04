@@ -7,7 +7,7 @@
 
 class Window
 {
-private:
+public:
 	class WindowException : public ExceptionHandler
 	{
 	public:
